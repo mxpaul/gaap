@@ -1,0 +1,11 @@
+---
+daemon:
+  log:
+    level: debug
+  tooling:
+    http_listen_address: 127.0.0.1:8085
+    metrics_path: /metrics
+  graceful_wait: 1s
+sleep_interval: 1s
+#sleep_limit: 2
+
