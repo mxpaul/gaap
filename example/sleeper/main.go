@@ -6,6 +6,7 @@ import (
 
 	"github.com/mxpaul/cancler"
 	"github.com/mxpaul/gaap"
+	"github.com/mxpaul/misery"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -22,7 +23,7 @@ type App struct {
 }
 
 type Stat struct {
-	WakeCounter *prometheus.CounterVec
+	WakeCounter *prometheus.CounterVec `misery:"name=wake_up_counter,labels=[sleeper_ident],help='Number of sleeper wakeups'"`
 }
 
 func (a *App) Configure(
@@ -33,15 +34,7 @@ func (a *App) Configure(
 	a.Config = cfg
 	a.Log = logger
 
-	a.Stat.WakeCounter = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "wake_up_counter",
-			Help: "Number of sleeper wakeups",
-		},
-		[]string{"sleeper_ident"},
-	)
-
-	if err := registry.Register(a.Stat.WakeCounter); err != nil {
+	if err := misery.RegisterMetrics(&a.Stat, registry); err != nil {
 		return errors.Wrap(err, "counter register failed")
 	}
 
